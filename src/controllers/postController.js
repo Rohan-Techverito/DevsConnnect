@@ -169,6 +169,13 @@ export const getSinglePost = async (req, res) => {
       },
     });
 
+    if (!postData) {
+      return res.json({
+        status: 404,
+        message: "Post not found",
+      });
+    }
+
     const { currentUserId } = req.query;
     if (currentUserId) {
       const postsData = await prisma.posts.findMany({
@@ -248,6 +255,76 @@ export const deletePost = async (req, res) => {
 
 export const updatePost = async (req, res) => {
   try {
+    const postId = parseInt(req.params.id);
+
+    const post = await prisma.posts.findUnique({
+      where: {
+        id: postId,
+      },
+    });
+
+    if (!post) {
+      return res.json({
+        status: 404,
+        message: "Post not found",
+      });
+    }
+
+    if (post.userId !== req.user.result.id) {
+      return res.json({
+        status: 403,
+        message: "You can only edit your own posts",
+      });
+    }
+
+    const {
+      Title,
+      Description,
+      gitHubLink,
+      deployedLink,
+      demoVideoLink,
+      technologiesUsed,
+    } = req.body;
+
+    if (
+      Title == null ||
+      Description == null ||
+      String(Title).trim() === "" ||
+      String(Description).trim() === ""
+    ) {
+      return res.json({
+        status: 400,
+        message: "Title and description are required",
+      });
+    }
+
+    if (technologiesUsed !== undefined && technologiesUsed.length === 0) {
+      return res.json({
+        status: 400,
+        message: "At least one technology is required",
+      });
+    }
+
+    const data = {};
+    if (Title !== undefined) data.name = Title;
+    if (Description !== undefined) data.description = Description;
+    if (gitHubLink !== undefined) data.gitHubLink = gitHubLink;
+    if (deployedLink !== undefined) data.deployedLink = deployedLink;
+    if (demoVideoLink !== undefined) data.demoVideoLink = demoVideoLink;
+    if (technologiesUsed !== undefined) data.technologiesUsed = technologiesUsed;
+
+    const updatedPost = await prisma.posts.update({
+      where: {
+        id: postId,
+      },
+      data,
+    });
+
+    return res.json({
+      status: 200,
+      message: "Post updated successfully",
+      data: updatedPost,
+    });
   } catch (error) {
     res.json({
       status: 500,

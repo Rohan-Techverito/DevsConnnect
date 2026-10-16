@@ -1,17 +1,20 @@
 import React, { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
-import { Avatar, Image, List, Rate, Tag } from "antd";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import { Avatar, Button, Image, List, Rate, Tag } from "antd";
 import axios from "axios";
 import Spinner from "../Components/Spinner";
 import { FaGithub, FaHeart } from "react-icons/fa";
 import { MdOndemandVideo } from "react-icons/md";
 import { VscLiveShare } from "react-icons/vsc";
 import RequestContribModal from "../Components/RequestContribModal";
+import { useAuth } from "../contexts/authContext";
 import { FaCodeMerge } from "react-icons/fa6";
 import dayjs from "dayjs";
 
 const DetailPost = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
+  const [auth] = useAuth();
   const [postData, setPostData] = useState(null);
   const [ContributionRequestStatus, setContributionRequestStatus] = useState(1);
   const [open, setOpen] = useState(false);
@@ -77,6 +80,16 @@ const DetailPost = () => {
                 <span className="font-semibold mr-2">College Name:</span>
                 <span>{postData?.collegeName}</span>
               </div>
+              {Number(auth?.user?.id) === postData.userId && (
+                <div className="flex items-center mb-4">
+                  <Button
+                    type="primary"
+                    onClick={() => navigate(`/editPost/${id}`)}
+                  >
+                    Edit Post
+                  </Button>
+                </div>
+              )}
               <div className="flex justify-start items-center">
                 <FaHeart
                   key={"liked"}

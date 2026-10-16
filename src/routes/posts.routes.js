@@ -28,7 +28,7 @@ postRoutes.post("/createPost", upload.single("thumbnailImage"), createPost);
 postRoutes.get("/getPosts", getAllPosts);
 postRoutes.get("/getPost/:id", getSinglePost);
 postRoutes.delete("/deletePost/:id", deletePost);
-postRoutes.patch("/ipdatePost/:id", updatePost);
+postRoutes.patch("/updatePost/:id", requireSignIn, updatePost);
 postRoutes.put("/addLike", likePost);
 postRoutes.put("/removeLike", removeLikePost);
 postRoutes.get("/getFilteredPosts", getFilteredPosts);

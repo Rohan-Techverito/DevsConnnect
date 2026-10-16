@@ -6,6 +6,7 @@ import HomePage from "./Pages/homePage";
 import Login from "./Pages/login";
 import Register from "./Pages/register";
 import UploadPost from "./Pages/uploadPost";
+import EditPost from "./Pages/EditPost";
 import PageNotFound from "./Pages/PageNotFound";
 import ExplorePosts from "./Pages/explorePosts";
 import DetailPost from "./Pages/DetailPost";
@@ -27,6 +28,9 @@ function App() {
             <Route path="/register" element={<Register />} />
             <Route path="/createPost" element={<PrivateRoute />}>
               <Route path="" element={<UploadPost />} />
+            </Route>
+            <Route path="/editPost/:id" element={<PrivateRoute />}>
+              <Route path="" element={<EditPost />} />
             </Route>
             <Route path="/" element={<PrivateRoute />}>
               <Route path="/myPosts" element={<MyUploads />} />
